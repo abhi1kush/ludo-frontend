@@ -22,7 +22,7 @@
 
 @media (min-width: 800px) {
   :root {
-      --board-size: 90vh;
+      --board-size: 95vh;
   }
 }
 
