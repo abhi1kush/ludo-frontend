@@ -1,4 +1,4 @@
-import {CORNERS} from "../config";
+import {Corners} from "../config";
 import type { Color, Corner} from "../types/globalTypes";
 import "../styles/components/Board.css"
 
@@ -8,7 +8,7 @@ interface BoardProps {
 const Board = ({colors}: BoardProps) => {
     return (
         <div className="board">
-            {colors.map((home_color, index) => (<PlayerHome color={home_color} id={"1"} corner={CORNERS[index]}/>))}
+            {colors.map((home_color, index) => (<PlayerHome color={home_color} id={"1"} corner={Corners[index]}/>))}
         </div>
     )
 }
@@ -59,14 +59,14 @@ const PlayerHome = ({ id, color, corner}:PlayerHomeProps) => {
 		    <div className="square path"id={`${id}-cell-13`}></div>
 		</div>
         <div className={`path-to-victory-${corner}`}>
-                {(corner === 'top-left' || corner === 'top-right') && <div className="square path" id={`${id}-cell-14`}></div>}
+                {(corner === 'topLeft' || corner === 'topRight') && <div className="square path" id={`${id}-cell-14`}></div>}
 				<div className={`square path ${color}`} id={`${id}-cell-15`}></div>
 				<div className={`square path ${color}`} id={`${id}-cell-16`}></div>
 				<div className={`square path ${color}`} id={`${id}-cell-17`}></div>
 				<div className={`square path ${color}`} id={`${id}-cell-18`}></div>
 				<div className={`square path ${color}`} id={`${id}-cell-19`}></div>
 				<div className={`square path ${color}`} id={`${id}-cell-20`}></div>
-				{(corner === 'bottum-left' || corner === 'bottum-right') && <div className="square path" id={`${id}-cell-21`}></div>}
+				{(corner === 'bottumLeft' || corner === 'bottumRight') && <div className="square path" id={`${id}-cell-21`}></div>}
 		</div>
         </>
     )
