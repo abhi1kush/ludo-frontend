@@ -56,6 +56,6 @@ export interface GameState {
   tokenMap: TokenMapType;
   board: BoardType;
   winners: Winner[];
-  currentTurn: Corner;
+  currentTurn: Corner | null;
   diceValue: number | null;
 }

@@ -11,6 +11,13 @@ interface ConfigType {
     YELLOW: Color,
     MIN_X: number;
     MIN_Y: number;
+    RED_HEXCODE: string;
+    BLUE_HEXCODE: string;
+    GREEN_HEXCODE: string;
+    YELLOW_HEXCODE: string;
+    BORDER_COLOR: string;
+    STOP_COLOR: string;
+    BACKGROUND_COLOR: string;
 }
 
 const CONFIG: ConfigType = {
@@ -24,16 +31,16 @@ const CONFIG: ConfigType = {
     YELLOW: "yellow",
     MIN_X: 10,
     MIN_Y: 10,
+    RED_HEXCODE: "#e74c3c",
+    BLUE_HEXCODE: "#3498db",
+    GREEN_HEXCODE: "#2ecc71",
+    YELLOW_HEXCODE: "#f4d03f",
+    BORDER_COLOR: "#566573",
+    STOP_COLOR: "#bdc3c7",
+    BACKGROUND_COLOR: "white",
 }
 
 export const CornerToHomeStopMap: Record<Corner, Position> = {
-    "bottumLeft": "1",
-    "topLeft": "14",
-    "topRight": "27",
-    "bottumRight": "40",
-}
-
-export const CornerToPathEndMap: Record<Corner, Position> = {
     "bottumLeft": "1",
     "topLeft": "14",
     "topRight": "27",

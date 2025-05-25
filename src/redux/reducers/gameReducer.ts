@@ -150,7 +150,7 @@ const initialState: GameState = {
     "topLeft-4": null,
   },
   winners: [],
-  currentTurn: Corners[0],
+  currentTurn: null,
   diceValue: null,
 };
 
@@ -167,8 +167,12 @@ export const gameReducer = (
         return {
             ...state,
             corners: Corners,
-            cornerToPlayerMap: getDefaultPlayers(Corners),
-            tokenMap: getDefaultTokenMap(),
+            cornerToPlayerMap: {...state.cornerToPlayerMap,
+                ...getDefaultPlayers(Corners)
+            },
+            tokenMap: {...state.tokenMap,
+                ...getDefaultTokenMap()
+            },
             currentTurn: Corners[0],
         };
     case ROLL_DICE:
@@ -205,10 +209,11 @@ export const gameReducer = (
         },
         cornerToPlayerMap: {
             ...state.cornerToPlayerMap,
-            [state.currentTurn]: {
-                ...state.cornerToPlayerMap[state.currentTurn],
-                isPlaying: hasWon(state.currentTurn, state),
-            },
+            ...(state.currentTurn 
+                ? {[state.currentTurn]: {
+                    ...state.cornerToPlayerMap[state.currentTurn],
+                    isPlaying: hasWon(state.currentTurn, state),
+                }}: {}),
         }
      }
     }
