@@ -2,8 +2,8 @@ import React, { useRef, useEffect } from "react";
 import CONFIG, { DefaultCornerToColorMap } from "../config";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../redux/store";
-import { rollDice, startFourPlayerGame } from "../redux/actions/ludoActions";
-import type { Corner } from "../types/globalTypes";
+import { rollDice, startFourPlayerGame, moveToken, startOnePlayerTestGame} from "../redux/actions/ludoActions";
+import type { Corner, CornerToPlayerMapType, TokenPositionMap, TokenId } from "../types/globalTypes";
 
 interface drawTokenStandsParams {
     canvasCtx: CanvasRenderingContext2D | null;
@@ -15,7 +15,7 @@ interface drawTokenStandsParams {
 
 const CanvasBoard: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const {board, tokenMap, currentTurn, diceValue} = useSelector((state: RootState) => state.game);
+  const {board, tokenMap, currentTurn, diceValue, cornerToPlayerMap, tokensPositions} = useSelector((state: RootState) => state.game);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const CanvasBoard: React.FC = () => {
     };
 
       resizeCanvas();
-      dispatch(startFourPlayerGame());
+      dispatch(startOnePlayerTestGame());
       window.addEventListener("resize", resizeCanvas);
       return () => window.removeEventListener("resize", resizeCanvas);
     }, []);
@@ -72,7 +72,6 @@ const CanvasBoard: React.FC = () => {
     drawStaticLudoBoard(ctx, width, height);
     const cellSize = getBoardSize(width, height) / 15; 
     
-    // console.log("LOG STATTE", board, tokenMap, diceValue);
     // Draw tokens based on the board state
     Object.entries(board).forEach(([position, tokenIds]) => {
       if (tokenIds && tokenIds.length > 0) {
@@ -127,28 +126,23 @@ const CanvasBoard: React.FC = () => {
         // Calculate dice panel bounds based on current canvas dimensions
         const width = canvas.width / window.devicePixelRatio;
         const height = canvas.height / window.devicePixelRatio;
-        const currentCellSize = getBoardSize(width, height) / 15; // Recalculate cellSize based on current width
+        const currentCellSize = getBoardSize(width, height) / 15; 
 
         const victorySquareCoords = cellCoordinates["victorySquare"];
 
         if (victorySquareCoords) {
             const { row, col } = victorySquareCoords;
             const pixelCoords = getPixelCoords(CONFIG.MIN_X, CONFIG.MIN_Y, row, col, currentCellSize);
-            const panelSize = currentCellSize; // Same size as used in drawDicePanel
-            // const ctx = canvas.getContext("2d");
-            // if (!ctx) return;
-            // drawToken3D(ctx, pixelCoords.x, pixelCoords.y, panelSize / 2, "white"); // Draw dice panel background
+            const panelSize = currentCellSize; 
 
             const panelLeft = pixelCoords.x - panelSize / 2;
             const panelRight = pixelCoords.x + panelSize / 2;
             const panelTop = pixelCoords.y - panelSize / 2;
             const panelBottom = pixelCoords.y + panelSize / 2;
             
-            // console.log("DICE Panell DEBUG", clientX, clientY, clickX, clickY, panelLeft, panelRight, panelTop, panelBottom);
-            // Check if click/touch is within dice panel bounds
             if (panelLeft <= clientX && clientX <= panelRight &&
                 panelTop <= clientY && clientY <= panelBottom) {
-                console.log("Dice panel clicked/touched! Dispatching ROLL_DICE.");
+                // console.log("Dice panel clicked/touched! Dispatching ROLL_DICE.");
                 dispatch(rollDice());
             }
         }
@@ -165,10 +159,37 @@ const CanvasBoard: React.FC = () => {
     };
   }, [dispatch, currentTurn]); // Dependencies: dispatch (stable), cellSize (if it can truly change dynamically)
 
+  // MakeMove
+  useEffect(() => {
+    const tokenId = getRandomToken(cornerToPlayerMap, currentTurn, tokensPositions, diceValue || 0);
+    if (tokenId && diceValue) {
+      dispatch(moveToken(tokenId));
+    }
+  }, [diceValue]);
+
   return <canvas ref={canvasRef} width={400} height={200} />;
 };
 
 export default CanvasBoard;
+
+const getRandomToken = (cornerToPlayerMap: CornerToPlayerMapType, currentTurn: Corner | null, tokenPositionMap: TokenPositionMap, diceValue: number): TokenId | null => {
+    if (!currentTurn || !cornerToPlayerMap[currentTurn]) {
+        return null; 
+    }
+    const player = cornerToPlayerMap[currentTurn];
+    const tokenIds = player.tokenIds.filter(tokenId => tokenPositionMap[tokenId] !== "victorySquare");
+    const openTokenIds = tokenIds.filter(tokenId => !tokenPositionMap[tokenId].includes("tokenStand"));
+    if (tokenIds.length === 0) {
+        return null; 
+    }
+    if (openTokenIds.length > 0 && diceValue !== 6) {
+        // If there are open tokens, choose one randomly
+        const randomOpenTokenIndex = Math.floor(Math.random() * openTokenIds.length);
+        return openTokenIds[randomOpenTokenIndex];
+    }
+    const randomTokenIndex = Math.floor(Math.random() * tokenIds.length);
+    return player?.tokenIds[randomTokenIndex]; 
+}
 
 const cellCoordinates: { [key: string]: { row: number; col: number } } = {
     // Main Path (52 squares, starting from Green's first square outside home)
@@ -244,11 +265,11 @@ const cellCoordinates: { [key: string]: { row: number; col: number } } = {
     "bottumLeft-victory-55": { row: 10, col: 7 },
     "bottumLeft-victory-56": { row: 9, col: 7 },
 
-    "topLeft-victory-13": { row: 7, col: 0 }, // Red victory path (from 26 towards center)
-    "topLeft-victory-14": { row: 7, col: 1 },
-    "topLeft-victory-15": { row: 7, col: 2 },
-    "topLeft-victory-16": { row: 7, col: 3 },
-    "topLeft-victory-17": { row: 7, col: 4 },
+    "topLeft-victory-13": { row: 7, col: 1 }, // Red victory path (from 26 towards center)
+    "topLeft-victory-14": { row: 7, col: 2 },
+    "topLeft-victory-15": { row: 7, col: 3 },
+    "topLeft-victory-16": { row: 7, col: 4 },
+    "topLeft-victory-17": { row: 7, col: 5 },
 
     "topRight-victory-26": { row: 1, col: 7 }, // Blue victory path (from 39 towards center)
     "topRight-victory-27": { row: 2, col: 7 },

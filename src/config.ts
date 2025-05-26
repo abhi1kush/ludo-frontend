@@ -69,7 +69,7 @@ export const TokenIds: TokenId[] = [
 
 
 export const Colors: Color[] = [CONFIG.GREEN, CONFIG.YELLOW, CONFIG.BLUE, CONFIG.RED];
-export const Corners: Corner[]  = [CONFIG.BOTTUM_LEFT, CONFIG.BOTTUM_RIGHT, CONFIG.TOP_RIGHT, CONFIG.TOP_LEFT];
+export const Corners: Corner[]  = [CONFIG.BOTTUM_LEFT, CONFIG.TOP_LEFT, CONFIG.TOP_RIGHT, CONFIG.BOTTUM_RIGHT];
 
 export const DefaultCornerToColorMap = {
     [CONFIG.BOTTUM_LEFT]: CONFIG.GREEN,

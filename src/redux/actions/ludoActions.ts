@@ -2,12 +2,17 @@ import type { TokenId } from "../../types/globalTypes";
 
 export const START_TWO_PLAYER_GAME = "START_TWO_PLAYER_GAME";
 export const START_FOUR_PLAYER_GAME = "START_FOUR_PLAYER_GAME";
+export const START_ONE_PLAYER_TEST_GAME = "START_ONE_PLAYER_TEST_GAME";
 export const ROLL_DICE = 'ROLL_DICE';
 export const MOVE_TOKEN = 'MOVE_TOKEN';
 export const NEXT_TURN = 'NEXT_TURN';
 
 export const startTwoPlayerGame = () => ({
     type: START_TWO_PLAYER_GAME as typeof START_TWO_PLAYER_GAME,
+})
+
+export const startOnePlayerTestGame = () => ({
+    type: START_ONE_PLAYER_TEST_GAME as typeof START_ONE_PLAYER_TEST_GAME,
 })
 
 export const startFourPlayerGame = () => ({
@@ -31,4 +36,5 @@ export type GameAction =
   | ReturnType<typeof rollDice>
   | ReturnType<typeof moveToken>
   | ReturnType<typeof startFourPlayerGame>
-  | ReturnType<typeof startTwoPlayerGame>;
+  | ReturnType<typeof startTwoPlayerGame>
+  | ReturnType<typeof startOnePlayerTestGame>;
